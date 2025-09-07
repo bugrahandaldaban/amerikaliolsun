@@ -1,0 +1,796 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <script>
+        function populateFields() {
+            const motherName = document.getElementById("mother_name").value;
+            const fatherName = document.getElementById("father_name").value;
+            const babyName = document.getElementById("baby_name").value;
+            const flightDate = new Date(document.getElementById("long_date").value);
+            const motherInitials = motherName.split(" ").map(word => word[0]).join("");
+            const fatherInitials = fatherName.split(" ").map(word => word[0]).join("");
+            const pnrCode = generateRandomPNR();
+            const phoneNumber = generateRandomMobile();
+            const ticketNo = generateRandomTicketNo();
+            const issueDate = new Date();
+            issueDate.setDate(issueDate.getDate() - 3);
+            const longDate = formatDateLong(flightDate);
+            const departureDate = formatDateShort(flightDate);
+            const arrivalDate = formatDateShort(new Date(flightDate.setDate(flightDate.getDate() + 1)));
+            document.querySelectorAll(".mother_name_display").forEach(element => {
+                element.textContent = motherName;
+            });
+            document.getElementById("father_name_display").textContent = fatherName;
+            document.getElementById("baby_name_display").textContent = babyName;
+            document.getElementById("mother_initials_display").textContent = motherInitials;
+            document.getElementById("father_initials_display").textContent = fatherInitials;
+            document.getElementById("pnr_code_display").textContent = pnrCode;
+            document.getElementById("phone_number_display").textContent = phoneNumber;
+            document.querySelectorAll(".ticket_no_display").forEach(element => {
+                element.textContent = ticketNo;
+            });
+            document.getElementById("issue_date_display").textContent = formatDateTime(issueDate);
+            document.getElementById("long_date_display").textContent = longDate;
+            document.getElementById("departure_date_display").textContent = departureDate;
+            document.getElementById("arrival_date_display").textContent = arrivalDate;
+
+            const rate = parseFloat(document.getElementById("usd_try_rate").value);
+            const usdAmount = 1699;
+            if (!isNaN(rate)) {
+                const tryAmount = usdAmount * rate;
+                document.querySelector("#total_amount_display").textContent =
+                    "TRY " + tryAmount.toLocaleString("tr-TR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
+
+            document.querySelector(".form").style.display = "none";
+            document.title = motherName + " - THY Ticket";
+
+        }
+
+        function generateRandomPNR() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+        }
+
+        function generateRandomMobile() {
+            const prefixes = [
+                "505", "506", "507", "530", "531", "532", "533", "534", "535", "536", "537", "538", "539",
+                "540", "541", "542", "543", "544", "545", "546", "547", "548", "549", "550", "551", "552",
+                "553", "554", "555", "556"
+            ];
+            const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            const middlePart = "5";
+            const lastPart = Math.floor(100000 + Math.random() * 900000).toString();
+            return `+90-${prefix}${middlePart}${lastPart}`;
+        }
+
+        function generateRandomTicketNo() {
+            return `235${Math.floor(100000000000 + Math.random() * 900000000000)}`;
+        }
+
+        function formatDateLong(date) {
+            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+        }
+
+        function formatDateShort(date) {
+            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            return `${days[date.getDay()]}, ${months[date.getMonth()]} ${date.getDate()}`;
+        }
+
+        function formatDateTime(date) {
+            return date.toLocaleString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        }
+    </script>
+        
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Booking Paid and Issued</title>
+    <style>
+        /* Client-specific Styles */
+        #outlook a {
+            padding: 0;
+        }
+
+        body {
+            width: 100% !important;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            margin: 0;
+            padding: 0;
+            font-family:Tahoma,sans-serif;
+            color: #212529;
+            font-size: 13px;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            line-height: 18px;
+        }
+
+        .ExternalClass {
+            width: 100%;
+        }
+
+        .ExternalClass,
+        .ExternalClass p,
+        .ExternalClass span,
+        .ExternalClass font,
+        .ExternalClass td,
+        .ExternalClass div {
+            line-height: 100%;
+        }
+
+        #backgroundTable {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            line-height: 100% !important;
+        }
+
+        p {
+            margin: 1em 0;
+            line-height: normal;
+            color: #212529;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #212529;
+        }
+
+        .banner p {
+            margin: 0.75em 0 !important;
+        }
+
+        .banner p a {
+            text-decoration: underline;
+        }
+
+        /* End reset */
+
+        .manageflight a {
+            display: block;
+            color: #555 !important;
+            text-decoration: none;
+        }
+
+        .manageflight td:hover {
+            background: #e6e6e6
+        }
+
+        .manageflight td:hover a,
+        .manageflight td:hover a:hover {
+            color: #900652 !important;
+            text-decoration: none
+        }
+
+        a {
+            color: #0088cc;
+            text-decoration: none
+        }
+
+        a:hover {
+            text-decoration: underline
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form">
+        <label for="long_date">Uçuş Tarihi:</label>
+        <input type="date" id="long_date">
+        <br><br>
+        <label for="mother_name">Anne Adı:</label>
+        <input type="text" id="mother_name" placeholder="Anne Adı">
+        <br><br>
+        <label for="father_name">Baba Adı:</label>
+        <input type="text" id="father_name" placeholder="Baba Adı">
+        <br><br>
+        <label for="baby_name">Bebek Adı:</label>
+        <input type="text" id="baby_name" placeholder="Bebek Adı">
+        <br><br>
+        <label for="usd_try_rate">USD/TRY Kuru:</label>
+        <input type="number" id="usd_try_rate" placeholder="Örn: 33.60" step="0.01">
+        <br><br>
+        <button onclick="populateFields()">Oluştur</button>
+    </div>
+  
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <table width="720" border="0" cellpadding="0" cellspacing="0" align="center" style="padding-bottom: 0px;">
+        <tbody>
+            <tr style="background: #232b38;">
+                <td>
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <tbody>
+                            <tr>
+                                <td width="350" align="center">
+                                    <img src="https://cdn.turkishairlines.com/m/2190da9e53a70e4e/original/THY-LOGO.png"
+                                        width="218" height="40" style="margin: 15px">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="gmail_quote">
+        <div style="margin:0px">
+            <div style="display:block;padding:10px">
+                <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                    <tbody>
+                        <tr style="margin:auto">
+                            <td colspan="3" height="20"></td>
+                        </tr>
+                        <tr style="margin:auto">
+                            <td style="margin:auto;text-align:center" align="center">
+                                <table border="0" cellspacing="0" cellpadding="0"
+                                    style="width:720px;margin:auto;background-color:rgb(249,248,245)">
+                                    <tbody>
+                                        <tr style="margin:auto">
+                                            <td style="margin:auto;text-align:center" align="center">
+                                                <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td style="text-align:left;padding:10px" width="1%">
+                                                                <img src="https://ci3.googleusercontent.com/meips/ADKq_NYggGERj7K2KTbLD6BdALIGcet-8I3QN8byHhLXuoCKudvOkOWLrkE1UNQFQMLTK_dqKludXPzi8wxt1bYaW1VctA1_CnUVyn0qrUcUTy08dw6xAMCsxbyo=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/mail-ok.png" alt="OK" width="32"></td>
+                                                            <td style="text-align:left;padding:10px">
+                                                                <font size="3">Mrs. <span class="mother_name_display"></span></font><br>
+                                                                <font size="3">Your e-ticket has been issued. As Turkish Airlines, we are happy to welcome you.</font>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin:0px">
+            <div style="display:block">
+                <table border="0" cellspacing="0" cellpadding="0" width="100%"
+                    style="margin-top:10px">
+                    <tbody>
+                        <tr style="margin:auto">
+                            <td style="margin:auto;text-align:center" align="center">
+                                <table border="0" cellspacing="0" cellpadding="0" style="width:720px;margin:auto">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div style="display:block;padding:10px">
+                                                    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                                                        <tbody>
+                                                            <tr style="margin:auto">
+                                                                <td style="margin:auto;text-align:center" align="center">
+                                                                    <table border="0" cellspacing="0" cellpadding="0" style="width:720px;margin:auto;padding:20px;background-color:rgb(240,240,244)">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td style="text-align:left;padding:8px;font-size:35px">Details
+                                                                                    <div style="font-size:14px;color:rgb(43,110,225);margin-top: 16px;"><b>Issue Date: <span id="issue_date_display"></span> +0300<br>(Istanbul Local Time)</b>
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td style="text-align:center;padding:0px 8px" width="200">
+                                                                                    <div style="padding: 12px;margin-bottom:3px;;background-color:rgb(239,38,54)">
+                                                                                        <a href="https://www.turkishairlines.com" style="text-decoration:blink;font-size:35px" target="_blank">
+                                                                                            <font style="color:rgb(255,255,255)"><span id="pnr_code_display"></span></font>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <font size="3">Reservation Code (PNR)</font>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="font-family:Arial,Helvetica,sans-serif; margin:0px">
+            <div style="display:block;padding:10px">
+                <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                    <tbody>
+                        <tr style="margin:auto">
+                            <td style="margin:auto;text-align:left" align="center">
+                                <center>
+                                    <table border="0" cellspacing="0" cellpadding="0"style="width:720px;margin:auto;padding:10px; background-color:rgb(249,248,245)">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <p style="font-size:20px;margin:0px;padding-top:10px; color:rgb(35,43,56)">Miami - Istanbul, <span id="long_date_display"></span></p>
+                                                    <p style="padding-top:10px;margin:0px; color:rgb(33,115,226)"><b>Economy Class</b>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <table width="100%" style="text-align:center;margin-top:10px;padding:5px;background-color:rgb(255,255,255)">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="width:150px">
+                                                                    <p style="font-weight:bold;margin:0px;padding-top:10px;font-size:20px;text-align:left">22:15</p>
+                                                                    <p style="margin:0px;padding-top:5px;text-align:left;color:rgb(153,161,174)">Miami (MIA)</p>
+                                                                </td>
+                                                                <td>
+                                                                    <table width="100%" style="text-align:center">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <p style="margin:0px;padding:4px">Direct Flight</p>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td
+                                                                                    style="border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:rgb(153,161,174)">
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td style="padding:4px">
+                                                                                    <img src="https://ci3.googleusercontent.com/meips/ADKq_NZ2rWV76x4vAt_xi7oP8b0G5GNKusCkATThy6HzswcY3zslHsP6ksCdEktM6sBhCU839rp-U6ADreORfeyFfnVhDwSPGojAwCnxx6683O7fe0NBCT18ZQLZcN-T-7_OuA=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/carriercode_tk.png"
+                                                                                        height="20" style="vertical-align:middle" alt="">
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                                <td style="padding-right:10px;width:150px">
+                                                                    <p style="font-weight:bold;margin:0px;padding-top:10px;font-size:20px;text-align:right">16:50<span style="font-size: 12px; vertical-align: top; margin-left: 3px;">+1</span></p>
+                                                                    <p style="margin:0px;padding-top:5px;text-align:right;color:rgb(153,161,174)">Istanbul (IST)</p>
+                                                                </td>
+                                                                <td style="border-left-width:1px;border-left-style:solid;border-left-color:rgb(153,161,174)">
+                                                                </td>
+                                                                <td style="padding-right:10px;width:150px">
+                                                                    <p style="font-size:12px;margin:0px;padding:2px"><b>Economy Class (P)</b>
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </center>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display:block;padding:10px;font-family:Tahoma,sans-serif">
+                <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                    <tbody>
+                        <tr style="margin:auto">
+                            <td style="margin:auto;text-align:center" align="center">
+                                <table border="0" cellspacing="0" cellpadding="0" style="width:720px;margin:auto;border:1px solid rgb(211,211,214)">
+                                    <tbody>
+                                        <tr bgcolor="#79889a">
+                                            <th style="text-align:left;padding:10px;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                <font size="3" style="color:rgb(255,255,255)">FLIGHT</font>
+                                            </th>
+                                            <th style="text-align:left;padding:10px;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                <font size="3" style="color:rgb(255,255,255)">DEPARTURE</font>
+                                            </th>
+                                            <th style="text-align:left;padding:10px;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                <font size="3" style="color:rgb(255,255,255)">ARRIVAL</font>
+                                            </th>
+                                            <th style="text-align:left;padding:10px">
+                                                <font size="3" style="color:rgb(255,255,255)">DURATION</font>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:left;padding:10px;vertical-align:top;border:1px solid rgb(211,211,214)">
+                                                <img src="https://ci3.googleusercontent.com/meips/ADKq_NZ2rWV76x4vAt_xi7oP8b0G5GNKusCkATThy6HzswcY3zslHsP6ksCdEktM6sBhCU839rp-U6ADreORfeyFfnVhDwSPGojAwCnxx6683O7fe0NBCT18ZQLZcN-T-7_OuA=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/carriercode_tk.png" height="20" style="vertical-align:middle" alt="">
+                                                <font size="3" style="color:rgb(0,0,0)"><b>TK78</b></font>
+                                                <br>
+                                                <font size="2" style="color:rgb(149,161,175)"><b>Turkish Airlines</b>
+                                                </font> <br>
+                                                <font size="2"
+                                                    style="color:rgb(54,133,231)"><b>B777-300ER</b></font> <br>
+                                                <font size="2"
+                                                    style="color:rgb(54,133,231)"><b>Economy Class (P)</b>
+                                                </font>
+                                            </td>
+
+                                            <td style="text-align:left;padding:10px;vertical-align:top;border:1px solid rgb(211,211,214)">
+                                                <font size="3" style="color:rgb(54,133,231)"><b>22:15</b></font>
+                                                <br>
+                                                <font size="3" style="color:rgb(239,38,54)"><b><span id="departure_date_display"></span></b></font>
+                                                <br><br>
+                                                <font size="3" style="color:rgb(0,0,0)"><b>Miami, United States of America (MIA)</b>
+                                                </font>
+                                                <br>
+                                                <font size="2" style="color:rgb(149,161,175)"><b>Miami International Airport</b>
+                                                </font>
+                                                <br>
+                                            </td>
+                                            <td style="text-align:left;padding:10px;vertical-align:top;border:1px solid rgb(211,211,214)">
+                                                <font size="3" style="color:rgb(54,133,231)"><b>16:50<span style=" font-size: 8px; vertical-align: text-top; margin-left: 3px;">+1</span></b></font>
+                                                <br>
+                                                <font size="3" style="color:rgb(239,38,54)"><b><span id="arrival_date_display"></span></b></font>
+                                                <br><br>
+                                                <font size="3" style="color:rgb(0,0,0)"><b>Istanbul, Turkiye (IST)</b></font>
+                                                <br>
+                                                <font size="2"style="color:rgb(149,161,175)"><b>Istanbul International Airport</b></font>
+                                                <br>
+                                            </td>
+                                            <td style="text-align:left;border:1px solid rgb(211,211,214);padding:10px;vertical-align:top">
+                                                <br>
+                                                <br>
+                                                <font size="3" style="color:rgb(0,0,0)">
+                                                    <b>11h 35m</b>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display:block;font-family:Roboto,Helvetica,Arial,sans-serif">
+                <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:10px">
+                    <tbody>
+                        <tr>
+                            <td style="margin:auto;text-align:left">
+                                <center>
+                                    <table border="0" cellspacing="0" cellpadding="0"
+                                        style="width:720px;margin:auto;background-color:rgb(249,248,245)">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <table style="width:100%">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="padding-left:5px;height:40px;font-size:12px;background-color:rgb(244,245,248);color:rgb(35,43,56)">
+                                                                    <b>MODIFICATION*</b>
+                                                                </td>
+                                                                <td style="padding-left:5px;height:40px;font-size:12px;background-color:rgb(244,245,248);color:rgb(35,43,56)">
+                                                                    <b>CANCELLATION/REFUND</b>
+                                                                </td>
+                                                                <td style="padding-left:5px;height:40px;font-size: 12px;background-color:rgb(244,245,248);color:rgb(35,43,56)">
+                                                                    <b>BAGGAGE ALLOWANCE</b>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="border:1px solid rgb(218,224,232);padding:2px 2px 2px 5px;font-size:12px">
+                                                                    <p>
+                                                                        <font size="2" style="color:rgb(35,43,56)">
+                                                                        </font>
+                                                                    </p>
+                                                                    <p>
+                                                                        <font size="1" style="color:rgb(35,43,56)">
+                                                                            <img src="https://ci3.googleusercontent.com/meips/ADKq_NbLDBJ_MGBnENTaK919RQ6JI1ykRWiuLJz4YKT4ESxwXVCPQiHQQXWBvds9lbbp2E0qMAbBMYbRxPBQi8eR-Uycm2-JN9RMN3zODmy4QjH4DNh4yIq0_r94K3UppNU=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/mail-approve.png">4.802,00 TRY penalty amount
+                                                                        </font>
+                                                                    </p>
+                                                                    <p>
+                                                                        <font size="1" style="color:rgb(35,43,56)">
+                                                                            <img src="https://ci3.googleusercontent.com/meips/ADKq_NbLDBJ_MGBnENTaK919RQ6JI1ykRWiuLJz4YKT4ESxwXVCPQiHQQXWBvds9lbbp2E0qMAbBMYbRxPBQi8eR-Uycm2-JN9RMN3zODmy4QjH4DNh4yIq0_r94K3UppNU=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/mail-approve.png">12.906,00 TRY with penalty amount - (In case of no-show)
+                                                                        </font>
+                                                                    </p>
+                                                                </td>
+                                                                <td style="border:1px solid rgb(218,224,232);padding:2px 2px 2px 5px;font-size:12px">
+                                                                    <p>
+                                                                        <font size="1"style="color:rgb(239,38,54)">
+                                                                            <img src="https://ci3.googleusercontent.com/meips/ADKq_NYblrNo78rS7PhpwU7ZHEIIHsW3ScHRtLkOfZNrpn-Z-Cn1Lgf8XfBV9PPD48SIQRBEC5Hi_sfpDejKrTy-NY1MAf4JeEgvFtzQ6_CjDd03f0DodOCBEswClQCOng=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/mail-remove.png">Not allowed
+                                                                        </font>
+                                                                    </p>
+                                                                </td>
+                                                                <td style="border:1px solid rgb(218,224,232);padding:2px 2px 2px 5px;font-size:12px">
+                                                                    <p>
+                                                                        <font size="1"style="color:rgb(35,43,56)">
+                                                                            <img src="https://ci3.googleusercontent.com/meips/ADKq_NbLDBJ_MGBnENTaK919RQ6JI1ykRWiuLJz4YKT4ESxwXVCPQiHQQXWBvds9lbbp2E0qMAbBMYbRxPBQi8eR-Uycm2-JN9RMN3zODmy4QjH4DNh4yIq0_r94K3UppNU=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/mail-approve.png">Checked baggage 2 pieces x 23 kg
+                                                                        </font>
+                                                                    </p>
+                                                                    <p>
+                                                                        <font size="1" style="color:rgb(35,43,56)">
+                                                                            <img src="https://ci3.googleusercontent.com/meips/ADKq_NbLDBJ_MGBnENTaK919RQ6JI1ykRWiuLJz4YKT4ESxwXVCPQiHQQXWBvds9lbbp2E0qMAbBMYbRxPBQi8eR-Uycm2-JN9RMN3zODmy4QjH4DNh4yIq0_r94K3UppNU=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/mail-approve.png">Cabin baggage 1 piece x 8 kg
+                                                                        </font>
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </center>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <table border="0" cellspacing="0" cellpadding="0" width="100%"
+                    style="margin-top:10px">
+                    <tbody>
+                        <tr style="margin:auto">
+                            <td align="center">
+                                <table border="0" cellspacing="0" cellpadding="0" style="width:720px;margin:auto">
+                                    <tbody>
+                                        <tr>
+                                            <td width="1%">
+                                                <img src="https://ci3.googleusercontent.com/meips/ADKq_NYtSh_VSASl6b1robF-yT3fm29-7eoHwIua6CMZC6uAI6GpOv7e5pI3YHz9aDrYhjQ3z71fGJWFYCYdOJFRh43UIZZmnDtyIvj06sLpgcgElUNEKrrvxqZlecim=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/notice-red.png" style="margin-right: 10px; width: 32px;">
+                                            </td>
+                                            <td>
+                                                <font size="2">
+                                                    <p>When making changes to your ticket, you must pay the fare difference that may occur in the ticket price along with the change fee shown. When you select extra baggage, you can see your increased checked baggage allowance in the passenger preferences area. Last seat information shows the number of seats remaining for the relevant fare class.</p>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="1%">
+                                                <img src="https://ci3.googleusercontent.com/meips/ADKq_NYtSh_VSASl6b1robF-yT3fm29-7eoHwIua6CMZC6uAI6GpOv7e5pI3YHz9aDrYhjQ3z71fGJWFYCYdOJFRh43UIZZmnDtyIvj06sLpgcgElUNEKrrvxqZlecim=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/notice-red.png" style="margin-right: 10px; width: 32px;">
+                                            </td>
+                                            <td>
+                                                <font size="2">
+                                                    <p>Taxes for the missed flight may be refunded by Turkish Airlines in cases where they have not been paid to the relevant authority. In case of partial refund, the fare of the flight is collected and the remaining amount is returned to the account. Unless there is a contrary regulation, the ticketing service fee (DU) charged is not refundable.</p>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="1%">
+                                                <img src="https://ci3.googleusercontent.com/meips/ADKq_NYtSh_VSASl6b1robF-yT3fm29-7eoHwIua6CMZC6uAI6GpOv7e5pI3YHz9aDrYhjQ3z71fGJWFYCYdOJFRh43UIZZmnDtyIvj06sLpgcgElUNEKrrvxqZlecim=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/notice-red.png" style="margin-right: 10px; width: 32px;">
+                                            </td>
+                                            <td>
+                                                <font size="2">
+                                                    <p>In case of cancellation and refund, the rules of the flight with the most restricted fare rule apply.</p>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="1%">
+                                                <img src="https://ci3.googleusercontent.com/meips/ADKq_NYtSh_VSASl6b1robF-yT3fm29-7eoHwIua6CMZC6uAI6GpOv7e5pI3YHz9aDrYhjQ3z71fGJWFYCYdOJFRh43UIZZmnDtyIvj06sLpgcgElUNEKrrvxqZlecim=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/notice-red.png" style="margin-right: 10px; width: 32px;"></td>
+                                            <td>
+                                                <font size="2">
+                                                    <p>You must attend all flights on the ticket in order. If you do not attend any of your flights, all flights (including return flights) are automatically canceled.</p>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin:0px">
+            <div style="display:block">
+                <table border="0" cellspacing="0" cellpadding="0" style="width:720px;margin:auto">
+                    <tbody>
+                        <tr>
+                            <td style="padding:10px;text-align:left">
+                                <font size="6">Total Amount</font>
+                            </td>
+                            <td style="padding:10px;text-align:right">
+                                <font id="total_amount_display" size="6" style="color:rgb(54,133,231)">TRY 57.035,00</font>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin:0px">
+            <div style="display:block">
+                <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:10px">
+                    <tbody>
+                        <tr style="margin:auto">
+                            <td style="margin:auto;text-align:center" align="center">
+                                <table border="0" cellspacing="0" cellpadding="0" style="width:720px;margin:auto">
+                                    <tbody>
+                                        <tr style=" text-align: left">
+                                            <td width="1%">
+                                                <img src="https://ci3.googleusercontent.com/meips/ADKq_NYtSh_VSASl6b1robF-yT3fm29-7eoHwIua6CMZC6uAI6GpOv7e5pI3YHz9aDrYhjQ3z71fGJWFYCYdOJFRh43UIZZmnDtyIvj06sLpgcgElUNEKrrvxqZlecim=s0-d-e1-ft#https://www.turkishairlines.com/website_images/thy/mail/notice-red.png" style="margin-right: 10px; width: 32px;">
+                                            </td>
+                                            <td>
+                                                <font size="2">
+                                                    <p>Please make sure to check your destination country's passport/visa requirements and any other restrictions they may have in place under COVID-19 before you travel.</p>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin:0px">
+            <div style="display:block">
+                <table border="0" cellspacing="0" cellpadding="0" width="100%"
+                    style="margin-top:10px">
+                    <tbody>
+                        <tr style="margin:auto">
+                            <td colspan="3" height="20"></td>
+                        </tr>
+                        <tr style="margin:auto">
+                            <td style="margin:auto;text-align:center" align="center">
+                                <table border="0" cellspacing="0" cellpadding="0" style="width:720px;margin:auto;border:1px solid rgb(211,211,214)">
+                                    <tbody>
+                                        <tr bgcolor="#232b38">
+                                            <td style="padding:20px;text-align:left" width="20%">
+                                                <font size="3" style="color:rgb(255,255,255)">
+                                                    <b>Contact Details</b>
+                                                </font>
+                                            </td>
+                                            <td style="padding:20px;text-align:center" width="20%">
+                                                <font size="3" style="color:rgb(255,255,255)">
+                                                    <b>Phone Number</b>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                        <tr bgcolor="#ffffff">
+                                            <td style="padding:20px;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                <font size="3"><span class="mother_name_display"></span></font>
+                                            </td>
+                                            <td style="padding:20px;text-align:center">
+                                                <font size="3"><b><span id="phone_number_display"></span></b></font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="display:block">
+            <table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-top:10px">
+                <tbody>
+                    <tr style="margin:auto">
+                        <td style="margin:auto;text-align:center" align="center">
+                            <table border="0" cellspacing="0" cellpadding="0" style="width:720px;margin:auto;border:1px solid rgb(211,211,214)">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                                                <tbody>
+                                                    <tr bgcolor="#232b38">
+                                                        <td style="padding:25px 30px;border-right-width:1px;border-right-style:solid;border-right-color:rgb(221,221,221); width: 48%;" colspan="2">
+                                                            <font size="3" style="color:rgb(255,255,255)"><b>Passanger</b></font>
+                                                        </td>
+                                                        <td style="padding:25px 30px;text-align:center;border-right-width:1px;border-right-style:solid;border-right-color:rgb(221,221,221)">
+                                                            <font size="3" style="color:rgb(255,255,255)"><b>Private Passanger</b></font>
+                                                        </td>
+                                                        <td style="padding:25px 30px;text-align:center" colspan="2">
+                                                            <font size="3" style="color:rgb(255,255,255)"><b>Membership Number</b></font>
+                                                        </td>
+                                                    </tr>
+                                                    <tr bgcolor="#ffffff">
+                                                        <td>
+                                                            <table>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td style="padding:5px">
+                                                                            <p style="margin:0px;border-radius:50%;display:inline-block;width:40px;height:40px;text-align:center;line-height:40px;background-color:rgb(232,25,50);color:rgb(255,255,255)"><span id="mother_initials_display"></span></p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td style="padding:20px;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                            <font size="3" style="font-weight:bold">
+                                                                <b>Mrs. <span class="mother_name_display"></span></b>
+                                                            </font>
+                                                            <br>
+                                                            <font size="2" style="color:rgb(149,161,175)">
+                                                                <b>Ticket No <span class="ticket_no_display"></span></b>
+                                                            </font>
+                                                        </td>
+                                                        <td
+                                                            style="padding:20px;text-align:center;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                            <font size="3">
+                                                                <b>None</b>
+                                                            </font>
+                                                        </td>
+                                                        <td style="padding:20px;text-align:center">
+                                                            <font size="3">
+                                                                <b>-</b>
+                                                            </font>
+                                                        </td>
+                                                    </tr>
+                                                    <tr bgcolor="#ffffff">
+                                                        <td>
+                                                            <table></table>
+                                                        </td>
+                                                        <td
+                                                            style="padding:20px;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                            <font size="3" style="font-weight:bold">
+                                                                <b><span id="baby_name_display"></span></b>
+                                                            </font>
+                                                            <br>
+                                                            <font size="2" style="color:rgb(149,161,175)">
+                                                                <b>Ticket No <span class="ticket_no_display"></span></b>
+                                                            </font>
+                                                        </td>
+                                                        <td
+                                                            style="padding:20px;text-align:center;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                            <font size="3">
+                                                                <b>None</b>
+                                                            </font>
+                                                        </td>
+                                                        <td style="padding:20px;text-align:center">
+                                                            <font size="3">
+                                                                <b>-</b>
+                                                            </font>
+                                                        </td>
+                                                    </tr>
+                                                    <tr bgcolor="#ffffff">
+                                                        <td>
+                                                            <table>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td style="padding:5px">
+                                                                            <p style="margin:0px;border-radius:50%;display:inline-block;width:40px;height:40px;text-align:center;line-height:40px;background-color:rgb(232,25,50);color:rgb(255,255,255)"><span id="father_initials_display"></span></p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td style="padding:20px;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                            <font size="3" style="font-weight:bold">
+                                                                <b>Mr. <span id="father_name_display"></span></b>
+                                                            </font>
+                                                            <br>
+                                                            <font size="2" style="color:rgb(149,161,175)"><b>Ticket No <span class="ticket_no_display"></span></b></font>
+                                                        </td>
+                                                        <td style="padding:20px;text-align:center;border-right-width:1px;border-right-style:solid;border-right-color:rgb(211,211,214)">
+                                                            <font size="3">
+                                                                <b>None</b>
+                                                            </font>
+                                                        </td>
+                                                        <td style="padding:20px;text-align:center">
+                                                            <font size="3">
+                                                                <b>-</b>
+                                                            </font>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
