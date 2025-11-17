@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<script>
+let passengerCount = 1;
+const maxPassengers = 4;
+
+function addPassenger() {
+  if (passengerCount < maxPassengers) {
+    passengerCount++;
+
+    const formDiv = document.querySelector(".form");
+    const newInput = document.createElement("div");
+    newInput.setAttribute("id", `passenger_${passengerCount}_div`);
+    newInput.innerHTML = `
+      <input type="text" id="passenger_${passengerCount}_name" placeholder="Ad Soyad">
+      <button onclick="removePassenger(${passengerCount})">Kişiyi Çıkart</button>
+    `;
+    formDiv.insertBefore(newInput, document.getElementById("addPassengerButton"));
+    if (passengerCount === maxPassengers) {
+      document.querySelector("#addPassengerButton").style.display = "none";
+    }
+  }
+}
+
+function removePassenger(id) {
+  if (passengerCount > 1) {
+    const passengerDiv = document.getElementById(`passenger_${id}_div`);
+    passengerDiv.remove();
+    passengerCount--;
+    if (passengerCount < maxPassengers) {
+      document.querySelector("#addPassengerButton").style.display = "inline-block";
+    }
+  }
+}
+
+function populateFields() {
+  const passengerTable = document.querySelector(".passenger-info tbody");
+  passengerTable.innerHTML = "";
+
+  let primaryName = "";
+  for (let i = 1; i <= passengerCount; i++) {
+    const nameInput = document.getElementById(`passenger_${i}_name`);
+    const passengerName = nameInput ? nameInput.value : `Passenger ${i}`;
+    if (i === 1) primaryName = passengerName;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${passengerName}</td>
+      <td>QR 782<br>QR 239</td>
+      <td>Economy<br>Economy</td>
+      <td>${i === 1 ? generateRandomMobile() : "-"}</td>
+    `;
+    passengerTable.appendChild(row);
+  }
+
+  document.querySelector(".name_display").textContent = primaryName;
+
+  document.getElementById("pnr_code").textContent = generateRandomPNR();
+
+  document.querySelector("#total_passengers").textContent = passengerCount;
+  const totalPrice = 583.10 * passengerCount;
+  document.querySelector("#grand_total").textContent = `USD ${totalPrice.toFixed(2)}`;
+  document.querySelector("#total_price").textContent = `${totalPrice.toFixed(2)}`;
+
+  updateDates();
+
+  const formDiv = document.querySelector(".form");
+  formDiv.style.display = "none";
+
+  document.title = `Booking for ${primaryName} and ${passengerCount - 1} other(s)`;
+}
+
+function updateDates() {
+  const longDate1Input = document.getElementById("long_date");
+  const longDateDisplay = document.getElementById("long_date_display");
+  const departureDate1Span = document.getElementById("departure_date_1");
+  const arrivalDate1Span = document.getElementById("arrival_date_1");
+  const departureDate2Span = document.getElementById("departure_date_2");
+  const arrivalDate2Span = document.getElementById("arrival_date_2");
+
+  const longDate = new Date(longDate1Input.value);
+  if (!isNaN(longDate)) {
+    const departureDate1 = new Date(longDate);
+    const arrivalDate1 = new Date(longDate);
+    arrivalDate1.setDate(arrivalDate1.getDate() + 1);
+
+    const departureDate2 = new Date(longDate);
+    departureDate2.setDate(departureDate2.getDate() + 2);
+
+    const arrivalDate2 = new Date(departureDate2);
+
+    longDateDisplay.textContent = formatDateLong(longDate);
+    departureDate1Span.textContent = formatDateShort(departureDate1);
+    arrivalDate1Span.textContent = formatDateShort(arrivalDate1);
+    departureDate2Span.textContent = formatDateShort(departureDate2);
+    arrivalDate2Span.textContent = formatDateShort(arrivalDate2);
+  } else {
+    console.error("Geçerli bir tarih seçilmedi.");
+  }
+}
+
+function formatDateLong(date) {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  const dayName = days[date.getDay()];
+  const day = date.getDate();
+  const monthName = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${dayName}, ${day} ${monthName} ${year}`;
+}
+
+function formatDateShort(date) {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const dayName = days[date.getDay()];
+  const day = date.getDate();
+  const monthName = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${dayName}, ${day} ${monthName} ${year}`;
+}
+
+function generateRandomPNR() {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < 6; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+function generateRandomMobile() {
+  const prefixes = [
+    "505", "506", "507", "530", "531", "532", "533", "534", "535", "536", "537", "538", "539",
+    "540", "541", "542", "543", "544", "545", "546", "547", "548", "549", "550", "551", "552",
+    "553", "554", "555", "556"
+  ];
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  const middlePart = "5";
+  const lastPart = Math.floor(100000 + Math.random() * 900000).toString();
+  return `+90-${prefix}${middlePart}${lastPart}`;
+}
+
+</script>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Paid and Issued</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #333;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+    }
+
+    a {
+      color: #0088cc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .form {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header,
+    .section,
+    .footer {
+      border-bottom: 1px solid #630036;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+    }
+
+    .header img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .title {
+      color: #900652;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 0 0 10px;
+    }
+
+    .subtitle {
+      color: #333;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .brand {
+      color: #333;
+      font-size: 24px;
+    }
+
+    .flight-info,
+    .passenger-info,
+    .price-breakdown {
+      margin: 20px 0;
+    }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+    }
+
+    .info-table th,
+    .info-table td {
+      padding: 8px;
+      border: 1px solid #e1e1e1;
+      text-align: left;
+    }
+
+    .info-table th {
+      background-color: #f9f9f9;
+      font-weight: bold;
+    }
+
+    .highlight {
+      color: #8E2157;
+      font-size: 32px;
+    }
+
+    .footer p {
+      font-size: 12px;
+      margin: 5px 0;
+    }
+
+    .footer a {
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="form">
+    <input type="date" id="long_date">
+    <br><br>
+    <div id="passenger_1_div">
+      <input type="text" id="passenger_1_name" placeholder="Ad Soyad">
+    </div>
+    <button id="addPassengerButton" onclick="addPassenger()">Yeni Kişi Ekle</button>
+    <br><br>
+    <button onclick="populateFields()">Oluştur</button>
+  </div>
+  
+
+  <div class="container">
+    <div class="header">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <p class="brand">Qatar Airways</p>
+        <img src="https://booking.qatarairways.com/cms/resourcesCPM/images/PrivilegeClubLogo.jpg" alt="Privilege Club Logo">
+      </div>
+      <h1 class="title">Booking Status - 'Paid and Issued'</h1>
+      <p class="subtitle">Booking Reference (PNR): <b><span id="pnr_code"></span></b></p>
+      <h3>Dear <span class="name_display"></span>,</h3>
+      <p>Thank you for booking on qatarairways.com.</p>
+    </div>
+
+    <tr>
+      <td>
+        <h4>Outbound Flight</h4>
+        <table width="100%">
+          <tbody>
+            <tr>
+              <td width="20%" class="highlight">
+                <img width="20" src="https://cdn-icons-png.flaticon.com/512/565/565514.png">
+                &nbsp;Miami
+              </td>
+              <td width="10%">
+                <img width="32" src="https://static.thenounproject.com/png/888647-200.png"></td>
+              <td width="20%" class="highlight"><img width="20" src="https://cdn-icons-png.flaticon.com/512/565/565513.png">
+                &nbsp;Istanbul
+              </td>
+              <td width="50%" style="text-align: right;">
+                <img width="20" src="https://icons.veryicon.com/png/o/miscellaneous/esgcc-basic-icon-library/date-71.png">
+                &nbsp;<span id="long_date_display"></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+
+    <div class="section flight-info">
+      <h2 class="title">Flight Information</h2>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Departure</th>
+            <th>Duration</th>
+            <th>Arrival</th>
+            <th>Flight Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span id="departure_date_1">{departure_date_1}</span>
+              <div class="highlight">19:15</div>
+              <p>Miami International Airport, USA</p>
+            </td>
+            <td style="text-align: center;">
+              <img width="32" src="https://cdn-icons-png.flaticon.com/512/6485/6485101.png">
+              <br>13h 45m
+            </td>
+            <td>
+              <span id="arrival_date_1">{arrival_date_1}</span>
+              <div class="highlight">17:00</div>
+              <p>Doha, Hamad International Airport, Qatar</p>
+            </td>
+            <td>
+              <p>QR 778</p>
+              <p>Airbus A350-1000</p>
+              <p>Operated by: Qatar Airways <img src="https://www.qatarairways.com/content/dam/images/icons/flight/ic_nav_qatar_airways.svg"></p>
+            </td>
+          </tr>
+          <tr style="border: 1px solid #e1e1e1;">
+            <td style="text-align: center; line-height: 0.5; border: none;">
+              <img width="32" src="https://static.thenounproject.com/png/3847261-200.png">
+              <p>Connection time: 14h 45m</p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span id="departure_date_2">{departure_date_2}</span>
+              <div class="highlight">07:45</div>
+              <p>Doha, Hamad International Airport, Qatar</p>
+            </td>
+            <td style="text-align: center;">
+              <img width="32" src="https://cdn-icons-png.flaticon.com/512/6485/6485101.png">
+              <br>4h 35m
+            </td>
+            <td>
+              <span id="arrival_date_2">{arrival_date_2}</span>
+              <div class="highlight">12:20</div>
+              <p>Istanbul International Airport, Turkey</p>
+            </td>
+            <td>
+              <p>QR 239</p>
+              <p>Boeing 777-300ER</p>
+              <p>Operated by: Qatar Airways <img src="https://www.qatarairways.com/content/dam/images/icons/flight/ic_nav_qatar_airways.svg"></p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section passenger-info">
+      <h2 class="title">Passenger Details</h2>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Flight</th>
+            <th>Class</th>
+            <th>Mobile Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Yolcular buraya eklenecek -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section price-breakdown">
+      <h2 class="title">Price Breakdown</h2>
+      <table class="info-table">
+        <tbody>
+          <tr>
+            <td><b>Fare per passenger</b></td>
+            <td><b>364.00</b></td>
+          </tr>
+          <tr>
+            <td><b>Taxes, Fees, Charges</b>
+              <br>&nbsp;&nbsp;&nbsp;- Carrier Imposed International Surcharge (YQAC)
+              <br>&nbsp;&nbsp;&nbsp;- Departure Transportation Tax (USAP)
+              <br>&nbsp;&nbsp;&nbsp;- Fiscal Tax (YRVB)
+              <br>&nbsp;&nbsp;&nbsp;- Qatar Passenger Facility Charge PFC (G4AF)
+              <br>&nbsp;&nbsp;&nbsp;- Qatar Airport Fee International (QAAP)
+              <br>&nbsp;&nbsp;&nbsp;- September 11 Security fee (AYSE)
+              <br>&nbsp;&nbsp;&nbsp;- Passenger Facility Charge (XF)
+              <br>&nbsp;&nbsp;&nbsp;- Passenger Safety and Security Fee (R9SE)
+              <br>&nbsp;&nbsp;&nbsp;- Qatar Passenger Service Charge Departures (PZSE)
+              <br>&nbsp;&nbsp;&nbsp;- Qatar Passenger Service Charge Arrivals (PZAV)
+            </td>
+            <td><b>219.80</b>
+              <br>125.00
+              <br>22.90
+              <br>22.00
+              <br>16.50
+              <br>16.50
+              <br>5.60
+              <br>4.50
+              <br>2.70
+              <br>2.05
+              <br>2.05
+            </td>
+          </tr>
+          <tr>
+            <td>Total Price per Passenger</td>
+            <td>583.80</td>
+          </tr>
+          <tr>
+            <td>Number of Passengers</td>
+            <td id="total_passengers">1</td>
+          </tr>
+          <tr>
+            <td>Total Price</td>
+            <td id="total_price">583.80</td>
+          </tr>
+          <tr>
+            <td><h3>Grand Total</h3></td>
+            <td><h3 id="grand_total">USD 583.80</h3></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <h3>Purchase conditions</h3>
+      <li>For more information on baggage rules and restrictions on Qatar Airways flights, please <a href="https://www.qatarairways.com/en/baggage.html">click here</a>.</li>
+      <li>When you make a reservation on a flight to/from the U.S. one week or more prior to your flight departure through our website at <a href="https://www.qatarairways.com">www.qatarairways.com</a>, we will allow you to hold the reservation for 24 hours without payment.Once payment is received and ticket is issued, the fare rules will apply.</li>
+      <li>Should you wish to change your booking, and the originally purchased fare or booking class is not available for your new flights, difference of fare will be collected on top of the change fee if the rule permits changes.</li>
+      <li>If you have a stopover in Doha, please <a href="https://www.qatarairways.com/en-qa/hia-hamad-international-airport/transit-accommodation.html">click here</a> for more information.</li>
+      <li>An additional administrative/service fee for rebooking/cancellation may apply.</li>
+      <li>When a ticket is booked with a combination of fares, the most restrictive cancellation rule will apply.</li>
+      <li>Fares are not guaranteed until full payment is received and tickets are issued.</li>
+      <li>Where applicable, local airport taxes will be collected at time of check-in.</li>
+      <li>Additional card transaction fees may apply and is dependent on the card issuer.</li>
+      <li>You should carry a copy of this booking confirmation while you travel as it may be required for immigration purposes.</li>
+      <li><b>Remember to check your immigration and health requirements before you travel and ensure you carry the required travel documents.</b></li>
+      <li><b>If you are holding a non-Qatar Airways ticket for a connection afterwards, you will need to hold immigration approval to land at the final city in your itinerary that is ticketed by Qatar Airways.</b></li>
+      <li>We accept all major credit and debit cards, subject to local regulations. Please note Qatar Airways may require you to submit additional payment information online to verify the identity of the card holder.</li>
+      <li>In the event of any taxes, fees or charges, which you have paid to us at the time of the ticket issuance are abolished or reduced such that they no longer apply to you, or a lesser amount is due, or you have not used the relevant portion of the ticket, you will be entitled to claim a refund of those.</li>
+      <li>Please be advised that in the event you do not show up for any flight without advising us in advance with minimum three hours prior to flight departure, your return or onward reservations will automatically get canceled by the system and will be subject to the applicable penalties and fees.</li>
+      <li>For Qatar Airways Terms & Conditions, <a href="https://www.qatarairways.com/en/legal.html">click here</a>.</li>
+
+      <h4>Additional security measures for international flights to or from the U.S.A</h4>
+      <p>The Transportation Security Administration (TSA) screens all airline passengers and baggage prior to boarding. For further information, please visit the U.S. Department of Homeland Security website at: <a href="https://www.tsa.gov/travel/security-screening">https://www.tsa.gov/travel/security-screening</a></p>
+
+      <h3>Important information</h3>
+      <p>We have partnered with leading travel industry service providers, allowing you to conveniently book services which complement your booking on our website. Please read the terms and conditions when booking partner services. Payments may be processed by the provider according to the applicable terms and conditions. Customers can contact the service provider directly for additional special requests, modifications or cancellations. This also applies to modifications or cancellations caused by changes or disruptions to your flight itinerary or similar unforeseen circumstances. Qatar Airways has no influence on the rates, or on the terms and conditions offered by our partners, and we are not responsible for these services.</p>
+      <p>For customer support, visit <a href="https://www.qatarairways.com/en/contact-us.html">qatarairways.com/help</a>.</p>
+    </div>
+  </div>
+</body>
+
+</html>
