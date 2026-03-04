@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LOT Polish Airlines - E-Ticket Receipt</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #2c3e50;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f7f6;
+    }
+
+    a {
+      color: #3a509b;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 20px auto;
+      padding: 30px;
+      padding-bottom: 0;
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-top: 6px solid #252668;
+    }
+
+    .form {
+      max-width: 850px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .form input {
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .form button {
+      padding: 8px 15px;
+      background-color: #252668;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .form button:hover {
+      background-color: #3a509b;
+    }
+
+    .header,
+    .section,
+    .footer {
+      border-bottom: 2px solid #eaeaea;
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+    }
+
+    .title {
+      color: #252668;
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      color: #555;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+    }
+
+    .info-table th,
+    .info-table td {
+      padding: 12px;
+      border: 1px solid #e1e1e1;
+      text-align: left;
+    }
+
+    .info-table th {
+      background-color: #252668;
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .info-table tr:nth-child(even) {
+      background-color: #f9fbfd;
+    }
+
+    .highlight {
+      color: #252668;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .time-highlight {
+      color: #d70d15;
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    .time-sub {
+      font-size: 12px;
+      font-weight: normal;
+      color: #777;
+    }
+
+    .label-text {
+      font-size: 11px;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .footer p, .footer li {
+      font-size: 12px;
+      margin: 6px 0;
+      color: #666;
+    }
+
+    .route-summary {
+      background-color: #f0f4f8;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 4px solid #d70d15;
+    }
+
+    .print-btn {
+      background-color: #d70d15;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      float: right;
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .print-btn:hover {
+      background-color: #a70a10;
+    }
+
+    .dark-footer {
+      background-color: #343740;
+      padding: 15px 20px;
+      margin: 30px -30px 0 -30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .we-are-part {
+      color: white;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .print-btn {
+        display: none !important;
+      }
+      .container {
+        box-shadow: none;
+        border-top: none;
+        margin: 0;
+        padding: 0;
+      }
+      .dark-footer {
+        margin: 30px 0 0 0;
+      }
+      body {
+        background-color: white;
+      }
+    }
+  </style>
+  <script>
+    let passengerCount = 1;
+    const maxPassengers = 4;
+    const pricePerPassenger = 782.63; 
+
+    function addPassenger() {
+      if (passengerCount < maxPassengers) {
+        passengerCount++;
+        const formDiv = document.querySelector(".form");
+        const newInput = document.createElement("div");
+        newInput.setAttribute("id", `passenger_${passengerCount}_div`);
+        newInput.innerHTML = `
+          <input type="text" id="passenger_${passengerCount}_name" placeholder="Yolcu Ad Soyad">
+          <button onclick="removePassenger(${passengerCount})" style="background-color: #d70d15;">Sil</button>
+        `;
+        formDiv.insertBefore(newInput, document.getElementById("addPassengerButton"));
+        if (passengerCount === maxPassengers) {
+          document.querySelector("#addPassengerButton").style.display = "none";
+        }
+      }
+    }
+
+    function removePassenger(id) {
+      if (passengerCount > 1) {
+        const passengerDiv = document.getElementById(`passenger_${id}_div`);
+        passengerDiv.remove();
+        passengerCount--;
+        if (passengerCount < maxPassengers) {
+          document.querySelector("#addPassengerButton").style.display = "inline-block";
+        }
+      }
+    }
+
+    function populateFields() {
+      const passengerTable = document.querySelector(".passenger-info tbody");
+      passengerTable.innerHTML = "";
+
+      let primaryName = "";
+      for (let i = 1; i <= passengerCount; i++) {
+        const nameInput = document.getElementById(`passenger_${i}_name`);
+        const passengerName = nameInput && nameInput.value.trim() !== "" ? nameInput.value : `Yolcu ${i}`;
+        if (i === 1) primaryName = passengerName;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${passengerName}</td>
+          <td>LO30<br>LO135</td>
+          <td>Economy Standard<br>Economy Standard</td>
+          <td>${i === 1 ? generateRandomMobile() : "-"}</td>
+        `;
+        passengerTable.appendChild(row);
+      }
+
+      document.querySelectorAll(".name_display").forEach(el => el.textContent = primaryName);
+      
+      const pnr = generateRandomPNR();
+      document.querySelectorAll(".pnr_code").forEach(el => el.textContent = pnr);
+
+      document.querySelector("#total_passengers").textContent = passengerCount;
+      const totalPrice = pricePerPassenger * passengerCount;
+      document.querySelector("#grand_total").textContent = `USD ${totalPrice.toFixed(2)}`;
+
+      updateDates();
+
+      document.querySelector(".form").style.display = "none";
+      document.querySelector(".container").style.display = "block";
+      document.title = `LOT Booking - ${primaryName}`;
+    }
+
+    function updateDates() {
+      const longDate1Input = document.getElementById("long_date");
+      const longDate = new Date(longDate1Input.value);
+      
+      if (!isNaN(longDate)) {
+        const departureDate1 = new Date(longDate);
+        const arrivalDate1 = new Date(longDate);
+        arrivalDate1.setDate(arrivalDate1.getDate() + 1); 
+
+        const departureDate2 = new Date(arrivalDate1); 
+        const arrivalDate2 = new Date(arrivalDate1); 
+
+        document.getElementById("long_date_display").textContent = formatDateLong(longDate);
+        document.getElementById("departure_date_1").textContent = formatDateShort(departureDate1);
+        document.getElementById("arrival_date_1").textContent = formatDateShort(arrivalDate1);
+        document.getElementById("departure_date_2").textContent = formatDateShort(departureDate2);
+        document.getElementById("arrival_date_2").textContent = formatDateShort(arrivalDate2);
+      } else {
+        alert("Lütfen geçerli bir kalkış tarihi seçiniz.");
+        throw new Error("Tarih seçilmedi.");
+      }
+    }
+
+    function formatDateLong(date) {
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    }
+
+    function formatDateShort(date) {
+      const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    }
+
+    function generateRandomPNR() {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      return Array.from({length: 6}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+    }
+
+    function generateRandomMobile() {
+      const prefixes = ["505", "532", "533", "542", "544", "555"];
+      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+      return `+90-${prefix}-5${Math.floor(10000 + Math.random() * 90000)}`;
+    }
+
+    function printTicket() {
+      window.print();
+    }
+  </script>
+</head>
+
+<body>
+  <div class="form">
+    <h3>Bilet Bilgilerini Giriniz</h3>
+    <label>Kalkış Tarihi (MIA):</label><br>
+    <input type="date" id="long_date"><br><br>
+    
+    <div id="passenger_1_div">
+      <input type="text" id="passenger_1_name" placeholder="Ana Yolcu Ad Soyad">
+    </div>
+    
+    <button id="addPassengerButton" onclick="addPassenger()">+ Yeni Kişi Ekle</button>
+    <br><br>
+    <button onclick="populateFields()" style="width: 100%; font-size: 16px;">Bileti Oluştur</button>
+  </div>
+
+  <div class="container" style="display: none;">
+    <button class="print-btn" onclick="printTicket()">PDF İndir / Yazdır</button>
+    
+    <div class="header">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4OSIgaGVpZ2h0PSIzMC4xMzkiIHZpZXdCb3g9IjAgMCA4OSAzMC4xMzkiPjxkZWZzPjxzdHlsZT4uYXtmaWxsOiMyNTI2Njg7ZmlsbC1ydWxlOmV2ZW5vZGQ7fTwvc3R5bGU+PC9kZWZzPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC01ODQgLTQ3MS40MDkpIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1ODQgNDcxLjQwOSkiPjxwYXRoIGNsYXNzPSJhIiBkPSJNNzYuOTQ3LDQzLjdsMy40ODgtN2ExLjMxMywxLjMxMywwLDAsMSwuNzIsMS4xNzksMS4yOTMsMS4yOTMsMCwwLDEtLjE4MS42NjNsLTMsNSwxLjAxNC0uMTU3YTEuMDg0LDEuMDg0LDAsMCwxLC4xNjEtLjAxMkExLjAyNywxLjAyNywwLDAsMSw4MC4xNzMsNDQuNEg4M2wtLjI1NC0uMzJoLS41MTdsLS4xMTQtLjE1NmgxLjVhLjk4MS45ODEsMCwwLDAsLjc4NC40NzdjLS4wMTYuMDUzLS4wMzEuMS0uMDQ4LjE1N0g3OGwyLjYyOCwyLjAxN2ExLjIyNSwxLjIyNSwwLDAsMSwuNDc1Ljk3NSwxLjI0MywxLjI0MywwLDAsMS0uMzU5Ljg3OUw3Ni44LDQ0LjU2MUg3Mi40NDJjLS4wMTctLjA1Mi0uMDMzLS4xLS4wNDktLjE1N2w0LjU1NC0uNyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTM5LjAwMyAtMjcuNTU3KSIvPjxwYXRoIGNsYXNzPSJhIiBkPSJNMzMuMTM0LDMxLjkzOGE2LjI2LDYuMjYsMCwxLDEsNi4yNiw2LjI1OUE2LjI1OSw2LjI1OSwwLDAsMSwzMy4xMzQsMzEuOTM4Wk0xMy42MTgsMzcuNDg0SDIzLjg2N2ExMC43NDEsMTAuNzQxLDAsMCwxLTEuNTMyLTUuNTQ3QTE1LjA3LDE1LjA3LDAsMCwxLDM3LjQwNiwxNi44NjhIODlMODYuMzM3LDI2LjM5SDc2LjE1OUw3MC4zMTcsNDdINTkuMzU5TDY1LjIsMjYuMzlINTQuOTJhMTAuNzQyLDEwLjc0MiwwLDAsMSwxLjUzMiw1LjU0N0ExNS4wNywxNS4wNywwLDAsMSw0MS4zODEsNDcuMDA3SDQxLjExTDAsNDcsOC41MDcsMTYuODY5SDE5LjQ2MkwxMy42MTgsMzcuNDg0IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIC0xNi44NjgpIi8+PC9nPjwvZz48L3N2Zz4=" alt="LOT Polish Airlines Logo" style="height: 38px;">
+      </div>
+      <h1 class="title">Electronic Ticket - Confirmed</h1>
+      <p class="subtitle">Booking Reference (PNR): <b style="color: #252668;"><span class="pnr_code"></span></b></p>
+      <h3 style="color: #252668;">Dear <span class="name_display"></span>,</h3>
+      <p>Thank you for choosing LOT Polish Airlines. Your electronic ticket has been issued and your reservation is confirmed.</p>
+    </div>
+
+    <div class="route-summary">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="highlight">Miami (MIA)</span>
+        <span style="color: #666; font-size: 13px; font-weight: 500; border-bottom: 1px dashed #ccc; padding-bottom: 2px;">1 Stop</span>
+        <span class="highlight">Istanbul (IST)</span>
+        <span style="font-weight: bold; color: #555;">Departure: <span id="long_date_display"></span></span>
+      </div>
+    </div>
+
+    <div class="section flight-info">
+      <h2 class="title">Flight Information</h2>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Departure</th>
+            <th>Duration</th>
+            <th>Arrival</th>
+            <th>Flight Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span id="departure_date_1"></span>
+              <div class="time-highlight">20:35 <div class="time-sub">(8:35 PM)</div></div>
+              <p>Miami International Airport (MIA), USA</p>
+            </td>
+            <td style="text-align: center; vertical-align: middle; color: #555;">
+              ⏱️ 9h 10m
+            </td>
+            <td>
+              <span id="arrival_date_1"></span>
+              <div class="time-highlight">11:45 <div class="time-sub">(11:45 AM)</div></div>
+              <p>Warsaw Chopin Airport (WAW), Poland</p>
+            </td>
+            <td>
+              <div style="margin-bottom: 6px;">
+                <span class="label-text">Flight</span><br><b>LO30</b>
+              </div>
+              <div style="margin-bottom: 6px;">
+                <span class="label-text">Aircraft</span><br><b>Boeing 787-9 Dreamliner</b>
+              </div>
+              <div>
+                <span class="label-text">Operated by</span><br><b>LOT Polish Airlines</b>
+              </div>
+            </td>
+          </tr>
+          <tr style="background-color: #fce8e8;">
+            <td colspan="4" style="text-align: center; font-weight: bold; color: #d70d15; padding: 10px; border: 1px solid #f5c2c2;">
+              Connection in Warsaw (WAW): 1h 05m
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span id="departure_date_2"></span>
+              <div class="time-highlight">12:50 <div class="time-sub">(12:50 PM)</div></div>
+              <p>Warsaw Chopin Airport (WAW), Poland</p>
+            </td>
+            <td style="text-align: center; vertical-align: middle; color: #555;">
+              ⏱️ 2h 45m
+            </td>
+            <td>
+              <span id="arrival_date_2"></span>
+              <div class="time-highlight">17:35 <div class="time-sub">(5:35 PM)</div></div>
+              <p>Istanbul International Airport (IST), Türkiye</p>
+            </td>
+            <td>
+              <div style="margin-bottom: 6px;">
+                <span class="label-text">Flight</span><br><b>LO135</b>
+              </div>
+              <div style="margin-bottom: 6px;">
+                <span class="label-text">Aircraft</span><br><b>Embraer 195</b>
+              </div>
+              <div>
+                <span class="label-text">Operated by</span><br><b>LOT Polish Airlines</b>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section passenger-info">
+      <h2 class="title">Passenger Details</h2>
+      <table class="info-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Flight Segment</th>
+            <th>Fare Class</th>
+            <th>Contact Mobile</th>
+          </tr>
+        </thead>
+        <tbody>
+          </tbody>
+      </table>
+    </div>
+
+    <div class="section price-breakdown">
+      <h2 class="title">Fare & Tax Breakdown</h2>
+      <table class="info-table">
+        <tbody>
+          <tr>
+            <td><b>Base Fare (per passenger)</b></td>
+            <td style="text-align: right;"><b>285.00</b></td>
+          </tr>
+          <tr>
+            <td><b>Carrier-Imposed Surcharges (YQ/YR)</b></td>
+            <td style="text-align: right;"><b>368.00</b></td>
+          </tr>
+          <tr>
+            <td><b>Government & Airport Taxes (TFC)</b>
+              <ul style="margin: 5px 0; padding-left: 20px; color: #555;">
+                <li>Poland Airport Tax (XW): 52.60</li>
+                <li>U.S. International Departure Tax (US): 23.40</li>
+                <li>Türkiye Int. Passenger Service Charge: 21.50</li>
+                <li>Customs User Fee (YC): 7.20</li>
+                <li>Immigration User Fee (XY): 7.00</li>
+                <li>September 11 Security Fee (AY): 5.60</li>
+                <li>Passenger Facility Charge (XF): 4.50</li>
+                <li>APHIS Passenger Fee (XA): 3.83</li>
+                <li>Türkiye Security Fee: 3.20</li>
+                <li>Poland Passenger Service Charge (ND): 0.80</li>
+              </ul>
+            </td>
+            <td style="text-align: right; vertical-align: top;"><b>129.63</b></td>
+          </tr>
+          <tr style="background-color: #f0f4f8;">
+            <td>Total Price per Passenger</td>
+            <td style="text-align: right;">782.63</td>
+          </tr>
+          <tr>
+            <td>Number of Passengers</td>
+            <td id="total_passengers" style="text-align: right;">1</td>
+          </tr>
+          <tr style="background-color: #252668; color: white;">
+            <td><h3 style="margin: 0;">Grand Total</h3></td>
+            <td style="text-align: right;"><h3 id="grand_total" style="margin: 0;">USD 782.63</h3></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer" style="border: none; margin-bottom: 0; padding-bottom: 0;">
+      <h3 style="color: #252668;">Conditions of Carriage & Legal Notices</h3>
+      <ul>
+        <li><b>Baggage Allowance (Economy Standard):</b> You are entitled to 1 piece of cabin baggage up to 8 kg (max 55x40x23 cm) and 1 piece of checked baggage up to 23 kg. Any checked bag exceeding 23 kg will be subject to heavy excess baggage penalties, and no single piece may exceed 32 kg due to international labor laws.</li>
+        <li><b>24-Hour Risk-Free Cancellation:</b> In accordance with US DOT regulations, as this flight originates in the United States, you may cancel this non-refundable ticket for a full cash refund to the original form of payment within 24 hours of booking, provided the purchase was made directly via LOT channels and the flight is at least 24 hours away.</li>
+        <li><b>Sequential Coupon Use (No-Show Policy):</b> Tickets must be used in the sequential order of the routing (MIA-WAW-IST). If you fail to board the first segment (MIA-WAW), your onward connection to Istanbul and any subsequent flights will be automatically cancelled by our departure control system without a refund of the base fare or carrier surcharges.</li>
+        <li><b>Tax Refund Policy:</b> If you voluntarily cancel a non-refundable Economy Saver/Standard ticket, the base fare and YQ/YR surcharges are non-refundable. However, unutilized government user fees and airport taxes (such as US, XA, YC, XY, and Poland XW) remain refundable upon request.</li>
+        <li><b>Time2Think:</b> Any service fees previously paid to hold this fare via the 'Time2Think' feature are non-refundable and are not deducted from the total ticket cost shown above.</li>
+        <li><b>Transit at Warsaw Chopin (WAW):</b> As your connection involves a Non-Schengen to Non-Schengen transfer, you will remain in the international transit zone. Your checked baggage will be automatically transferred to flight LO135 to Istanbul. No Polish border control or Schengen visa is required for this connection.</li>
+        <li>For full General Conditions of Carriage, EU261/2004 passenger rights regarding delays, and LOT's Privacy Policy, please visit <a href="https://www.lot.com/en/legal" target="_blank">lot.com/en/legal</a>.</li>
+      </ul>
+    </div>
+    
+    <div class="dark-footer">
+      <span class="we-are-part">We are part of</span>
+      <img src="https://www.lot.com/content/dam/lot/lot-com/icons/footer_2_0/PGL_STOPKA1.coreimg.svg/1749102571720/PGL_STOPKA1.svg" alt="PGL Logo" style="height: 24px;">
+      <img src="https://www.lot.com/content/dam/lot/lot-com/icons/footer_2_0/MBSIG_colour_version1_NEG2.coreimg.svg/1749102562628/MBSIG_colour_version1_NEG2.svg" alt="Star Alliance Member Logo" style="height: 18px;">
+    </div>
+  </div>
+</body>
+</html>
